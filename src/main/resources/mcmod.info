@@ -1,0 +1,16 @@
+[
+{
+  "modid": "missingremapper",
+  "name": "Missing Remapper",
+  "description": "Helps Remapping of removed mods.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["BloodWorkXGaming"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
