@@ -43,6 +43,22 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
                         )))
         )
 
+
+        val soulshards = ModConfig(
+                SingleRemap(
+                        "soulshardstow:soul_shard",
+                        "missingremapper:inbetweenshard",
+                        true,
+                        MaintainingMetaRemapper(MetaSpecificChange(
+                                -1,
+                                "soulshardsrespawn:soul_shard",
+                                NbtPath("KillCount") remap NbtPathRemapper("binding", "kills"),
+                                NbtPath("Entity") remap NbtPathRemapper("binding", "bound")
+                        )))
+        )
+
+        config = soulshards
+
         println("config = $config")
 
         config?.remaps?.stream()?.filter { it.needsInBetweenItem }?.forEach {

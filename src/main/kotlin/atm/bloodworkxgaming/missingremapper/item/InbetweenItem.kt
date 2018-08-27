@@ -4,6 +4,7 @@ import atm.bloodworkxgaming.missingremapper.SingleRemap
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTBase
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ActionResult
 import net.minecraft.util.EnumHand
@@ -21,7 +22,7 @@ class InbetweenItem(private val remap: SingleRemap) : Item() {
         return super.onItemRightClick(worldIn, playerIn, handIn)
     }
 
-    fun convert(stack: ItemStack): ItemStack {
+    private fun convert(stack: ItemStack): ItemStack {
         val meta = remap.metaRemap[stack.metadata]
         meta ?: throw RemappingException("metaspecifc is null")
         meta.finalItem ?: throw RemappingException("finalItem name is null")
@@ -29,9 +30,25 @@ class InbetweenItem(private val remap: SingleRemap) : Item() {
         val finalStack = ItemStack(finalItem, stack.count, meta.targetMeta)
 
         val nbtOld = stack.tagCompound ?: return finalStack // return early if there is no nbt to copy
+        meta.nbtRemap ?: return finalStack
+
         val tag = NBTTagCompound()
 
+        meta.nbtRemap.forEach { from, remapper ->
+            var iter: NBTBase? = nbtOld
+            for (s in from.path) {
+                if (iter is NBTTagCompound?) {
+                    iter = iter?.getTag(s)
+                } else {
+                    println("Couldn't follow path $from")
+                    return@forEach
+                }
+            }
 
+            iter ?: return@forEach
+
+            remapper.remap(iter, tag)
+        }
 
         finalStack.tagCompound = tag
         return finalStack
