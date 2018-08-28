@@ -1,11 +1,13 @@
 package atm.bloodworkxgaming.missingremapper.item
 
 import atm.bloodworkxgaming.missingremapper.SingleRemap
+import atm.bloodworkxgaming.missingremapper.extensions.get
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTBase
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.nbt.NBTTagString
 import net.minecraft.util.ActionResult
 import net.minecraft.util.EnumHand
 import net.minecraft.util.ResourceLocation
@@ -35,16 +37,7 @@ class InbetweenItem(private val remap: SingleRemap) : Item() {
         val tag = NBTTagCompound()
 
         meta.nbtRemap.forEach { from, remapper ->
-            var iter: NBTBase? = nbtOld
-            for (s in from.path) {
-                if (iter is NBTTagCompound?) {
-                    iter = iter?.getTag(s)
-                } else {
-                    println("Couldn't follow path $from")
-                    return@forEach
-                }
-            }
-
+            val iter: NBTBase? = nbtOld[from]
             iter ?: return@forEach
 
             remapper.remap(iter, tag)
@@ -56,4 +49,4 @@ class InbetweenItem(private val remap: SingleRemap) : Item() {
 }
 
 
-class RemappingException(message: String) : Exception(message)
+class RemappingException(message: String, exception: Exception? = null) : Exception(message, exception)

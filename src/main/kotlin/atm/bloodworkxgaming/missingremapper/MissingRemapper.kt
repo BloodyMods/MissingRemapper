@@ -14,7 +14,6 @@ import atm.bloodworkxgaming.missingremapper.remapping.NbtPathRemapper
 import net.minecraft.item.Item
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
@@ -35,7 +34,7 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
                         "test:item",
                         "missingremapper:inbetween1",
                         true,
-                        MaintainingMetaRemapper(MetaSpecificChange(
+                        MaintainingMetaRemapper(MetaSpecificChangeItem(
                                 -1,
                                 "minecraft:coal",
                                 NbtPath("test", "meta", "deep") remap { nbtIn, target -> 20 },
@@ -49,7 +48,7 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
                         "soulshardstow:soul_shard",
                         "missingremapper:inbetweenshard",
                         true,
-                        MaintainingMetaRemapper(MetaSpecificChange(
+                        MaintainingMetaRemapper(MetaSpecificChangeItem(
                                 -1,
                                 "soulshardsrespawn:soul_shard",
                                 NbtPath("KillCount") remap NbtPathRemapper("binding", "kills"),

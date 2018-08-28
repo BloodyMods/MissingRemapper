@@ -16,19 +16,39 @@ data class ModConfig(val remaps: List<SingleRemap>) {
     constructor(vararg remaps: SingleRemap) : this(remaps.toList())
 }
 
+enum class RemapType {
+    ITEM, BLOCK
+}
+
 data class SingleRemap(
         val from: String,
         val toItem: String,
-        val needsInBetweenItem: Boolean = false,
+        val type: RemapType,
+        val needsInBetweenIstem: Boolean = false,
         val metaRemap: IMetaRemapper = NullMetaRemapper()
 )
 
-data class MetaSpecificChange(
-        val targetMeta: Int,
-        val finalItem: String?,
-        val nbtRemap: Map<NbtPath, INbtRemapper>? = null
-) {
-    constructor(targetMeta: Int,
-                finalItem: String?,
-                vararg nbtRemaps: Pair<NbtPath, INbtRemapper>) : this(targetMeta, finalItem, nbtRemaps.toMap())
+sealed class AMetaSpecificChange {
+    abstract val targetMeta: Int
+    abstract val finalItem: String?
+    abstract val nbtRemap: Map<NbtPath, INbtRemapper>?
 }
+
+data class MetaSpecificChangeItem(
+        override val targetMeta: Int,
+        override val finalItem: String?,
+        override val nbtRemap: Map<NbtPath, INbtRemapper>? = null
+) : AMetaSpecificChange() {
+    constructor(targetMeta: Int, finalItem: String?, vararg nbtRemaps: Pair<NbtPath, INbtRemapper>)
+            : this(targetMeta, finalItem, nbtRemaps.toMap())
+}
+
+data class MetaSpecificChangeBlock(
+        override val targetMeta: Int,
+        override val finalItem: String?,
+        override val nbtRemap: Map<NbtPath, INbtRemapper>? = null
+) : AMetaSpecificChange() {
+    constructor(targetMeta: Int, finalItem: String?, vararg nbtRemaps: Pair<NbtPath, INbtRemapper>)
+            : this(targetMeta, finalItem, nbtRemaps.toMap())
+}
+
