@@ -1,5 +1,6 @@
-import atm.bloodworkxgaming.missingremapper.MetaSpecificChangeItem
+import atm.bloodworkxgaming.missingremapper.MetaSpecificChange
 import atm.bloodworkxgaming.missingremapper.ModConfig
+import atm.bloodworkxgaming.missingremapper.RemapType
 import atm.bloodworkxgaming.missingremapper.SingleRemap
 import atm.bloodworkxgaming.missingremapper.extensions.get
 import atm.bloodworkxgaming.missingremapper.extensions.nbt
@@ -16,10 +17,12 @@ class Tests {
                 SingleRemap(
                         "test:item",
                         "missingremapper:inbetween1",
+                        RemapType.ITEM,
                         true,
-                        MaintainingMetaRemapper(MetaSpecificChangeItem(
+                        MaintainingMetaRemapper(MetaSpecificChange(
                                 -1,
                                 "blub:item2",
+                                null,
                                 mapOf(
                                         NbtPath("test", "meta", "deep") remap { nbtIn, target -> 20 }
                                 )
@@ -27,17 +30,6 @@ class Tests {
         )
 
         println("config = $config")
-    }
-
-    @Test
-    fun testScripts() {
-        val engine = ScriptEngineManager().getEngineByExtension("kts")
-        println("engine = ${engine}")
-        /*with(ScriptEngineManager().getEngineByExtension("kts")) {
-            eval("val x = 3")
-            val res2 = eval("x + 2")
-            Assertions.assertEquals(5, res2)
-        }*/
     }
 
     @Test

@@ -24,31 +24,17 @@ data class SingleRemap(
         val from: String,
         val toItem: String,
         val type: RemapType,
-        val needsInBetweenIstem: Boolean = false,
+        val needsInBetweenItem: Boolean = false,
         val metaRemap: IMetaRemapper = NullMetaRemapper()
 )
 
-sealed class AMetaSpecificChange {
-    abstract val targetMeta: Int
-    abstract val finalItem: String?
-    abstract val nbtRemap: Map<NbtPath, INbtRemapper>?
-}
-
-data class MetaSpecificChangeItem(
-        override val targetMeta: Int,
-        override val finalItem: String?,
-        override val nbtRemap: Map<NbtPath, INbtRemapper>? = null
-) : AMetaSpecificChange() {
-    constructor(targetMeta: Int, finalItem: String?, vararg nbtRemaps: Pair<NbtPath, INbtRemapper>)
-            : this(targetMeta, finalItem, nbtRemaps.toMap())
-}
-
-data class MetaSpecificChangeBlock(
-        override val targetMeta: Int,
-        override val finalItem: String?,
-        override val nbtRemap: Map<NbtPath, INbtRemapper>? = null
-) : AMetaSpecificChange() {
-    constructor(targetMeta: Int, finalItem: String?, vararg nbtRemaps: Pair<NbtPath, INbtRemapper>)
-            : this(targetMeta, finalItem, nbtRemaps.toMap())
+data class MetaSpecificChange(
+        val targetMeta: Int,
+        val finalItem: String,
+        val tileID: String? = null,
+        val nbtRemap: Map<NbtPath, INbtRemapper>? = null
+) {
+    constructor(targetMeta: Int, finalItem: String, tileID: String? = null, vararg nbtRemaps: Pair<NbtPath, INbtRemapper>)
+            : this(targetMeta, finalItem, tileID, nbtRemaps.toMap())
 }
 

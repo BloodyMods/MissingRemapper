@@ -12,6 +12,10 @@ data class NbtPath(val path: List<String>) : Iterable<String> {
     constructor(vararg strings: String) : this(strings.toList())
     constructor() : this(emptyList())
 
+    infix fun remap(remapper: NbtPath): Pair<NbtPath, INbtRemapper> {
+        return Pair(this, NbtPathRemapper(remapper))
+    }
+
     infix fun remap(remapper: INbtRemapper): Pair<NbtPath, INbtRemapper> {
         return Pair(this, remapper)
     }

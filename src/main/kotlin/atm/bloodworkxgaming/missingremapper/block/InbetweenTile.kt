@@ -1,14 +1,54 @@
 package atm.bloodworkxgaming.missingremapper.block
 
+import atm.bloodworkxgaming.missingremapper.SingleRemap
+import atm.bloodworkxgaming.missingremapper.remapping.NbtPath
+import atm.bloodworkxgaming.missingremapper.remapping.NbtPathRemapper
+import atm.bloodworkxgaming.missingremapper.remapping.remapNBT
+import net.minecraft.block.Block
+import net.minecraft.init.Blocks
 import net.minecraft.tileentity.TileEntity
+import net.minecraft.util.EnumActionResult
 import net.minecraft.util.ITickable
-import net.minecraftforge.fml.common.registry.GameRegistry
 
-class InbetweenTile : TileEntity(), ITickable {
+class InbetweenTile(val remap: SingleRemap, val meta: Int) : TileEntity(), ITickable {
     init {
-        GameRegistry.registerTileEntity()
     }
+
     override fun update() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (world.isRemote) return
+
+        println("I am ticking")
+        val nbtOld = serializeNBT()
+        val finalItem = remap.metaRemap[meta]?.finalItem
+        if (finalItem == null) {
+            println("Couldn't get blockname for meta $meta for remap $remap" )
+            return
+        }
+
+        val block = Block.getBlockFromName(finalItem)
+        block ?: return
+
+        world.setBlockState(pos, Blocks.CHEST.getStateFromMeta(0), 2 or 16)
+
+        val tile = world.getTileEntity(pos)
+        val nbtNew = tile?.serializeNBT()
+
+        println("tileOld: $nbtOld")
+        println("tile: $nbtNew")
+
+
+        val remapper = mapOf(NbtPath("Items") remap NbtPathRemapper("Items"))
+
+        if (nbtNew != null) {
+            remapNBT(nbtOld, remapper, nbtNew)
+
+            tile.readFromNBT(nbtNew)
+            println("nbtRemapped: $nbtNew")
+
+            tile.serializeNBT()
+            println("nbtSerialized: $nbtNew")
+
+        }
+
     }
 }
