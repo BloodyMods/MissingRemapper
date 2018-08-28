@@ -35,6 +35,7 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
         println("MOD_ID = $MOD_ID")
 
         config = ModConfig(
+                listOf("missingremapper:chest"),
                 SingleRemap(
                         "test:item",
                         "missingremapper:inbetween1",
@@ -43,7 +44,6 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
                         MaintainingMetaRemapper(MetaSpecificChange(
                                 -1,
                                 "minecraft:coal",
-                                null,
                                 NbtPath("test", "meta", "deep") remap { nbtIn, target -> 20 },
                                 NbtPath("test", "blub", "deep") remap NbtPathRemapper("test", "lala")
                         ))),
@@ -55,7 +55,6 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
                         MaintainingMetaRemapper(MetaSpecificChange(
                                 -1,
                                 "minecraft:chest",
-                                "missingremapper:chest",
                                 NbtPath("test") remap NbtPath("Path")
                         ))
                 )
@@ -63,6 +62,7 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
 
 
         val soulshards = ModConfig(
+                emptyList(),
                 SingleRemap(
                         "soulshardstow:soul_shard",
                         "missingremapper:inbetweenshard",
@@ -71,7 +71,6 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
                         MaintainingMetaRemapper(MetaSpecificChange(
                                 -1,
                                 "soulshardsrespawn:soul_shard",
-                                null,
                                 NbtPath("KillCount") remap NbtPathRemapper("binding", "kills"),
                                 NbtPath("Entity") remap NbtPathRemapper("binding", "bound")
                         )))
@@ -84,16 +83,12 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
         config?.remaps?.stream()?.filter { it.needsInBetweenItem }?.forEach {
             println("it = $it")
             when (it.type) {
-
                 RemapType.ITEM -> DataRegistry.ITEMS += InbetweenItem(it)
-
-                RemapType.BLOCK -> {
-                    DataRegistry.BLOCKS += InbetweenBlock(it)
-                    GameRegistry.registerTileEntity(InbetweenTile::class.java, ResourceLocation())
-                }
+                RemapType.BLOCK -> DataRegistry.BLOCKS += InbetweenBlock(it)
             }
-
         }
+
+        config?.tileIds?.forEach { GameRegistry.registerTileEntity(InbetweenTile::class.java, ResourceLocation(it)) }
 
         println("DataRegistry.ITEMS = ${DataRegistry.ITEMS}")
     }

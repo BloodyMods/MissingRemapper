@@ -2,17 +2,19 @@ package atm.bloodworkxgaming.missingremapper.item
 
 import atm.bloodworkxgaming.missingremapper.SingleRemap
 import atm.bloodworkxgaming.missingremapper.remapping.remapNBT
+import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ActionResult
 import net.minecraft.util.EnumHand
 import net.minecraft.util.ITickable
 import net.minecraft.util.ResourceLocation
 import net.minecraft.world.World
 
-class InbetweenItem(private val remap: SingleRemap) : Item(), ITickable {
+class InbetweenItem(private val remap: SingleRemap) : Item() {
     init {
         this.registryName = ResourceLocation(remap.toItem)
         this.unlocalizedName = remap.toItem
@@ -23,8 +25,8 @@ class InbetweenItem(private val remap: SingleRemap) : Item(), ITickable {
         return super.onItemRightClick(worldIn, playerIn, handIn)
     }
 
-    override fun update() {
-        println("I am ticking! $registryName")
+    override fun onUpdate(stack: ItemStack, worldIn: World, entityIn: Entity, itemSlot: Int, isSelected: Boolean) {
+        entityIn.replaceItemInInventory(itemSlot, convert(stack))
     }
 
     private fun convert(stack: ItemStack): ItemStack {

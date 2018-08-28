@@ -14,6 +14,7 @@ class Tests {
     @Test
     fun test1() {
         val config = ModConfig(
+                emptyList(),
                 SingleRemap(
                         "test:item",
                         "missingremapper:inbetween1",
@@ -22,7 +23,6 @@ class Tests {
                         MaintainingMetaRemapper(MetaSpecificChange(
                                 -1,
                                 "blub:item2",
-                                null,
                                 mapOf(
                                         NbtPath("test", "meta", "deep") remap { nbtIn, target -> 20 }
                                 )
