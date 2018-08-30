@@ -20,7 +20,7 @@ data class NbtPath(val path: List<String>) : Iterable<String> {
         return Pair(this, remapper)
     }
 
-    infix fun remap(function: (nbt: NBTBase, target: NBTTagCompound) -> Int): Pair<NbtPath, INbtRemapper> {
+    infix fun remap(function: (nbt: NBTBase, target: NBTTagCompound) -> Unit): Pair<NbtPath, INbtRemapper> {
         return Pair(this, CustomNbtRemapper(function))
     }
 }

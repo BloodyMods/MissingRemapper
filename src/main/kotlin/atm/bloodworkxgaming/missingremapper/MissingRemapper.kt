@@ -10,11 +10,18 @@ import atm.bloodworkxgaming.missingremapper.MissingRemapper.VERSION
 import atm.bloodworkxgaming.missingremapper.MissingRemapper.config
 import atm.bloodworkxgaming.missingremapper.block.InbetweenBlock
 import atm.bloodworkxgaming.missingremapper.block.InbetweenTile
+import atm.bloodworkxgaming.missingremapper.extensions.get
+import atm.bloodworkxgaming.missingremapper.extensions.set
 import atm.bloodworkxgaming.missingremapper.item.InbetweenItem
 import atm.bloodworkxgaming.missingremapper.remapping.MaintainingMetaRemapper
 import atm.bloodworkxgaming.missingremapper.remapping.NbtPath
 import atm.bloodworkxgaming.missingremapper.remapping.NbtPathRemapper
+import atm.bloodworkxgaming.missingremapper.remapping.remapNBT
+import net.minecraft.block.Block
 import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.nbt.NBTTagList
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.fml.common.Mod
@@ -73,10 +80,37 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
                                 "soulshardsrespawn:soul_shard",
                                 NbtPath("KillCount") remap NbtPathRemapper("binding", "kills"),
                                 NbtPath("Entity") remap NbtPathRemapper("binding", "bound")
+                        ))),
+                SingleRemap(
+                        "soulshardstow:cage",
+                        "missingremapper:inbetweencage",
+                        RemapType.BLOCK,
+                        true,
+                        MaintainingMetaRemapper(MetaSpecificChange(
+                                -1,
+                                "soulshardsrespawn:soul_cage",
+                                NbtPath("activeTime") remap NbtPathRemapper("activeTime"),
+                                NbtPath("Items") remap { nbt, target ->
+                                    if (nbt is NBTTagCompound) {
+                                        val itemNbt = nbt["Items"][0] as NBTTagCompound
+
+                                        val list = mapOf(NbtPath("KillCount") remap NbtPathRemapper("binding", "kills"),
+                                                NbtPath("Entity") remap NbtPathRemapper("binding", "bound"),
+                                                NbtPath("Slot") remap NbtPathRemapper("Slot"))
+
+                                        val newItem = remapNBT(itemNbt, list)
+
+                                        val tags = NBTTagList()
+
+                                        tags.appendTag(newItem)
+
+                                        target[NbtPath("inventory")] = NBTTagList()
+                                    }
+                                }
                         )))
         )
 
-        // config = soulshards
+        config = soulshards
 
         println("config = $config")
 
@@ -109,6 +143,20 @@ object CommonHandler : AbstractCommonHandler(modItems = ModItems, modBlocks = Mo
             println("remap = $remap")
 
             mapping.remap(Item.getByNameOrId(remap.toItem))
+        }
+    }
+
+    @SubscribeEvent
+    fun missingMappingBlock(event: RegistryEvent.MissingMappings<Block>) {
+        for (mapping in event.allMappings) {
+            println("mapping = ${mapping.key}")
+            val key = mapping.key.toString()
+            val remap = config?.remaps?.firstOrNull { it.from == key }
+            remap ?: continue
+
+            println("remap = $remap")
+
+            mapping.remap(Block.getBlockFromName(remap.toItem))
         }
     }
 }

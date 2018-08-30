@@ -8,7 +8,7 @@ interface INbtRemapper {
     fun remap(nbtIn: NBTBase, target: NBTTagCompound)
 }
 
-class CustomNbtRemapper(private val function: (nbt: NBTBase, target: NBTTagCompound) -> Int) : INbtRemapper {
+class CustomNbtRemapper(private val function: (nbt: NBTBase, target: NBTTagCompound) -> Unit) : INbtRemapper {
     override fun remap(nbtIn: NBTBase, target: NBTTagCompound) {
         function(nbtIn, target)
     }

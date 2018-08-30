@@ -1,11 +1,10 @@
 package atm.bloodworkxgaming.missingremapper.extensions
 
 import atm.bloodworkxgaming.missingremapper.remapping.NbtPath
-import net.minecraft.nbt.NBTBase
-import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.nbt.*
 import java.util.*
 
-operator fun NBTTagCompound.get(key: NbtPath): NBTBase? {
+operator fun NBTBase?.get(key: NbtPath): NBTBase? {
     var iter: NBTBase? = this
 
     for (s in key) {
@@ -17,6 +16,16 @@ operator fun NBTTagCompound.get(key: NbtPath): NBTBase? {
     }
 
     return iter
+}
+
+operator fun NBTBase?.get(key: String): NBTBase? = this[NbtPath(key)]
+operator fun NBTBase?.get(key: Int): NBTBase? {
+    if (this is NBTTagList) {
+        val res =  this.get(key)
+        if (res !is NBTTagEnd) return res
+    }
+
+    return null
 }
 
 operator fun NBTTagCompound.set(key: NbtPath, value: NBTBase) {
