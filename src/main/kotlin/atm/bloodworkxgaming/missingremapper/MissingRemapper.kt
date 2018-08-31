@@ -18,6 +18,7 @@ import atm.bloodworkxgaming.missingremapper.remapping.NbtPath
 import atm.bloodworkxgaming.missingremapper.remapping.NbtPathRemapper
 import atm.bloodworkxgaming.missingremapper.remapping.remapNBT
 import net.minecraft.block.Block
+import net.minecraft.init.Blocks
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
@@ -69,7 +70,7 @@ object MissingRemapper : BloodyModMain(CommonHandler) {
 
 
         val soulshards = ModConfig(
-                emptyList(),
+                listOf("soulshardstow:cage"),
                 SingleRemap(
                         "soulshardstow:soul_shard",
                         "missingremapper:inbetweenshard",
@@ -157,6 +158,9 @@ object CommonHandler : AbstractCommonHandler(modItems = ModItems, modBlocks = Mo
             println("remap = $remap")
 
             mapping.remap(Block.getBlockFromName(remap.toItem))
+            println("Action of $mapping = ${mapping.action}")
+
+            // mapping.remap(Blocks.DIAMOND_BLOCK)
         }
     }
 }

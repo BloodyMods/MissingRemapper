@@ -10,7 +10,7 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.EnumActionResult
 import net.minecraft.util.ITickable
 
-class InbetweenTile(val remap: SingleRemap, val meta: Int) : TileEntity(), ITickable {
+class InbetweenTile(val remap: SingleRemap, private val meta: Int) : TileEntity(), ITickable {
     init {
     }
 
@@ -28,7 +28,10 @@ class InbetweenTile(val remap: SingleRemap, val meta: Int) : TileEntity(), ITick
         val block = Block.getBlockFromName(finalItem)
         block ?: return
 
-        world.setBlockState(pos, Blocks.CHEST.getStateFromMeta(0), 2 or 16)
+        val state = block.getStateFromMeta(meta)
+        println("block.getStateFromMeta(meta) = $state")
+
+        world.setBlockState(pos, state, 2 or 16)
 
         val tile = world.getTileEntity(pos)
         val nbtNew = tile?.serializeNBT()
